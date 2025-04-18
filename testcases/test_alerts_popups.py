@@ -10,7 +10,6 @@ from selenium.webdriver.common.keys import Keys
 
 logger = logging.getLogger(__name__)
 
-
 def test_simple_alert(driver):
     logger.info("Accepting simple alert")
     driver.find_element(*AlertsAndPopupsLocators.simple_alert).click()
@@ -21,7 +20,6 @@ def test_simple_alert(driver):
     alert.accept()
     # OR
     # alert.dismiss()
-
 
 def test_confirm_alert(driver):
     logger.info("Check and confirm alert button")
