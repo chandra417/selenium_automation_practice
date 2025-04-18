@@ -1,43 +1,29 @@
-import time
+class BankAccount:
+    def __init__(self, account_holder, balance=0):
+        self.account_holder = account_holder
+        self.balance = balance
 
-import openpyxl
-from selenium.webdriver.support.select import Select
-from SeleniumProject.Data_driven_testing import XLUtil
+    def deposit(self, amount):
+        if amount <= 0:
+            raise ValueError ("Amount must be positive")
+        self.balance += amount
+        return self.balance
 
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.service import Service
+    def withdraw(self, amount):
+        if amount <= 0:
+            raise ValueError("Amount must be positive")
+        if amount > self.balance:
+            raise ValueError("Insuffecient funds")
+        self.balance -= amount
+        return self.balance
 
-serv_object = Service(r'C:\Users\Administrator\Desktop\PYTHON\Selenium\Driver\Chrome\chromedriver-win64\chromedriver.exe')
-options = webdriver.ChromeOptions()
-options.add_experimental_option('detach', True)
+    def display(self):
+        return f"Account Holder:{self.account_holder} and balnce is:{self.balance}"
 
-driver = webdriver.Chrome(service=serv_object, options=options)
-driver.get("https://www.moneycontrol.com/fixed-income/calculator/state-bank-of-india-sbi/fixed-deposit-calculator-SBI-BSB001.html?classic=true")
-driver.maximize_window()
-driver.implicitly_wait(10)
 
-driver.find_element(By.XPATH, "//*[@id='wzrk-confirm']").click()
-file_name = "sample.xlsx"
-wb = openpyxl.load_workbook(file_name)
-ws = wb.active
 
-max_r = XLUtil.getRowCount(file_name, ws.title)
-max_c = XLUtil.getColumnCount(file_name, ws.title)
-
-for r in range(2, max_r +1):
-    driver.find_element(By.XPATH, "//*[@id='principal']").send_keys( ws.cell(r, 1).value )
-    driver.find_element(By.XPATH, "//*[@id='interest']").send_keys(  ws.cell(r, 2).value )
-    driver.find_element(By.XPATH, "//*[@id='tenure']").send_keys( ws.cell(r, 3).value  )
-
-    interest_type = Select(driver.find_element(By.XPATH, "//*[@id='frequency']"))
-    interest_type.select_by_visible_text(  ws.cell(r, 4).value )
-
-    driver.find_element(By.XPATH, "//*[@id='fdMatVal']/div[2]/a[1]").click()
-
-    final_value = driver.find_element(By.XPATH, "//*[@id='resp_matval']/strong").text
-    ws.cell(r,6).value = int(float(final_value))
-
-    driver.find_element(By.XPATH, "//*[@id='fdMatVal']/div[2]/a[2]").click()
-wb.save(file_name)
-driver.close()
+account = BankAccount("Chandu", 5000)
+account.deposit(5000)
+account.withdraw(2000)
+final = account.display()
+print(final)
